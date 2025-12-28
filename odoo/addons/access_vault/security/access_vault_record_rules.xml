@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- READ: dev is visible to all internal users; otherwise public or authorized via user/group/owner or active share -->
+    <record id="rule_access_vault_credential_read_user" model="ir.rule">
+        <field name="name">Access Vault: read credentials (user)</field>
+        <field name="model_id" ref="model_access_vault_credential"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">
+            ['|', ('environment', '=', 'development'),
+              '|', ('privacy', '=', 'public'),
+              '|', ('allowed_user_ids', 'in', user.id),
+              '|', ('allowed_group_ids', 'in', user.all_group_ids.ids),
+              '|', ('allowed_manager_user_ids', 'in', user.id),
+              '|', ('allowed_manager_group_ids', 'in', user.all_group_ids.ids),
+              '|', ('owner_ids', 'in', user.id),
+                   '&amp;', ('share_ids.user_id', '=', user.id), ('share_ids.active', '=', True)
+            ]
+        </field>
+    </record>
+
+    <!-- WRITE: owners or explicit managers -->
+    <record id="rule_access_vault_credential_write_user" model="ir.rule">
+        <field name="name">Access Vault: write credentials (owner/creator)</field>
+        <field name="model_id" ref="model_access_vault_credential"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="domain_force">
+            ['|', ('owner_ids', 'in', user.id),
+              '|', ('allowed_manager_user_ids', 'in', user.id),
+                   ('allowed_manager_group_ids', 'in', user.all_group_ids.ids)
+            ]
+        </field>
+    </record>
+
+    <!-- Secrets follow their parent credential rules -->
+    <record id="rule_access_vault_secret_read_user" model="ir.rule">
+        <field name="name">Access Vault: read secrets (by credential)</field>
+        <field name="model_id" ref="model_access_vault_secret"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">
+            ['|', ('credential_id.environment', '=', 'development'),
+              '|', ('credential_id.privacy', '=', 'public'),
+              '|', ('credential_id.allowed_user_ids', 'in', user.id),
+              '|', ('credential_id.allowed_group_ids', 'in', user.all_group_ids.ids),
+              '|', ('credential_id.allowed_manager_user_ids', 'in', user.id),
+              '|', ('credential_id.allowed_manager_group_ids', 'in', user.all_group_ids.ids),
+              '|', ('credential_id.owner_ids', 'in', user.id),
+                   '&amp;', ('credential_id.share_ids.user_id', '=', user.id), ('credential_id.share_ids.active', '=', True)
+            ]
+        </field>
+    </record>
+
+    <!-- Secrets: admins can see all secrets -->
+    <record id="rule_access_vault_secret_admin" model="ir.rule">
+        <field name="name">Access Vault: admin can see all secrets</field>
+        <field name="model_id" ref="model_access_vault_secret"/>
+        <field name="groups" eval="[(4, ref('access_vault.group_access_vault_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="rule_access_vault_secret_write_user" model="ir.rule">
+        <field name="name">Access Vault: write secrets (owner/creator)</field>
+        <field name="model_id" ref="model_access_vault_secret"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="domain_force">
+            ['|', ('credential_id.owner_ids', 'in', user.id),
+              '|', ('credential_id.allowed_manager_user_ids', 'in', user.id),
+                   ('credential_id.allowed_manager_group_ids', 'in', user.all_group_ids.ids)
+            ]
+        </field>
+    </record>
+
+    <!-- Shares: only visible/managed if you can access the credential OR if you are admin -->
+    <record id="rule_access_vault_share_user" model="ir.rule">
+        <field name="name">Access Vault: manage shares (by credential or admin)</field>
+        <field name="model_id" ref="model_access_vault_share"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">
+            ['|', ('credential_id.environment', '=', 'development'),
+              '|', ('credential_id.privacy', '=', 'public'),
+              '|', ('credential_id.allowed_user_ids', 'in', user.id),
+              '|', ('credential_id.allowed_group_ids', 'in', user.all_group_ids.ids),
+              '|', ('credential_id.allowed_manager_user_ids', 'in', user.id),
+              '|', ('credential_id.allowed_manager_group_ids', 'in', user.all_group_ids.ids),
+              '|', ('credential_id.owner_ids', 'in', user.id),
+              '|', '&amp;', ('credential_id.share_ids.user_id', '=', user.id), ('credential_id.share_ids.active', '=', True),
+                   ('created_by', '=', user.id)
+            ]
+        </field>
+    </record>
+
+    <!-- Shares: admins can see all shares -->
+    <record id="rule_access_vault_share_admin" model="ir.rule">
+        <field name="name">Access Vault: admin can see all shares</field>
+        <field name="model_id" ref="model_access_vault_share"/>
+        <field name="groups" eval="[(4, ref('access_vault.group_access_vault_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Logs: visible if you can access the credential OR if you created the log -->
+    <record id="rule_access_vault_log_user" model="ir.rule">
+        <field name="name">Access Vault: read logs (by credential or own logs)</field>
+        <field name="model_id" ref="model_access_vault_log"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">
+            ['|', ('credential_id.environment', '=', 'development'),
+              '|', ('credential_id.privacy', '=', 'public'),
+              '|', ('credential_id.allowed_user_ids', 'in', user.id),
+              '|', ('credential_id.allowed_group_ids', 'in', user.all_group_ids.ids),
+              '|', ('credential_id.allowed_manager_user_ids', 'in', user.id),
+              '|', ('credential_id.allowed_manager_group_ids', 'in', user.all_group_ids.ids),
+              '|', ('credential_id.owner_ids', 'in', user.id),
+              '|', '&amp;', ('credential_id.share_ids.user_id', '=', user.id), ('credential_id.share_ids.active', '=', True),
+                   ('user_id', '=', user.id)
+            ]
+        </field>
+    </record>
+
+    <!-- Logs: admins can see all logs -->
+    <record id="rule_access_vault_log_admin" model="ir.rule">
+        <field name="name">Access Vault: admin can see all logs</field>
+        <field name="model_id" ref="model_access_vault_log"/>
+        <field name="groups" eval="[(4, ref('access_vault.group_access_vault_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+</odoo>
+
+

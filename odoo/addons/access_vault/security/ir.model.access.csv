@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vault_credential_user,access.vault.credential user,model_access_vault_credential,base.group_user,1,1,1,1
+access_vault_credential_admin,access.vault.credential admin,model_access_vault_credential,base.group_system,1,1,1,1
+
+access_vault_secret_user,access.vault.secret user,model_access_vault_secret,base.group_user,1,1,1,1
+access_vault_secret_admin,access.vault.secret admin,model_access_vault_secret,base.group_system,1,1,1,1
+
+access_vault_share_user,access.vault.share user,model_access_vault_share,base.group_user,1,1,1,0
+access_vault_share_admin,access.vault.share admin,model_access_vault_share,base.group_system,1,1,1,1
+
+access_vault_log_user,access.vault.log user,model_access_vault_log,base.group_user,1,0,0,0
+access_vault_log_admin,access.vault.log admin,model_access_vault_log,base.group_system,1,1,1,1
+
+access_vault_set_secret_wizard_user,access.vault.set_secret.wizard user,model_access_vault_set_secret_wizard,base.group_user,1,0,1,0
+

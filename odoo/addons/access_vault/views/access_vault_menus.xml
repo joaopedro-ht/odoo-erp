@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem id="menu_access_vault_root" name="Access Vault" sequence="10" action="access_vault.action_access_vault_dashboard"/>
+
+    <menuitem id="menu_access_vault_new_credential"
+              name="Nova credencial"
+              parent="menu_access_vault_root"
+              action="action_access_vault_credential_create_modal"
+              sequence="5"/>
+
+    <menuitem id="menu_access_vault_credentials"
+              name="Credenciais"
+              parent="menu_access_vault_root"
+              action="action_access_vault_credential"
+              sequence="10"/>
+
+    <menuitem id="menu_access_vault_rotation_due"
+              name="A rotacionar"
+              parent="menu_access_vault_root"
+              action="action_access_vault_credential_rotation_due"
+              sequence="15"/>
+
+    <menuitem id="menu_access_vault_shares"
+              name="Compartilhamentos"
+              parent="menu_access_vault_root"
+              action="action_access_vault_share"
+              sequence="20"/>
+
+    <menuitem id="menu_access_vault_logs"
+              name="Auditoria"
+              parent="menu_access_vault_root"
+              action="action_access_vault_log"
+              sequence="30"/>
+</odoo>
+
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_access_vault_log_list" model="ir.ui.view">
+        <field name="name">access.vault.log.list</field>
+        <field name="model">access.vault.log</field>
+        <field name="arch" type="xml">
+            <list string="Auditoria (Access Vault)">
+                <field name="timestamp"/>
+                <field name="credential_id"/>
+                <field name="user_id"/>
+                <field name="action"/>
+                <field name="detail"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_access_vault_log" model="ir.actions.act_window">
+        <field name="name">Auditoria</field>
+        <field name="res_model">access.vault.log</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
+
+

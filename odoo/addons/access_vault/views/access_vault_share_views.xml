@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_access_vault_share_list" model="ir.ui.view">
+        <field name="name">access.vault.share.list</field>
+        <field name="model">access.vault.share</field>
+        <field name="arch" type="xml">
+            <list string="Compartilhamentos temporários">
+                <field name="credential_id"/>
+                <field name="user_id"/>
+                <field name="expires_at"/>
+                <field name="active"/>
+                <field name="created_by"/>
+                <button name="action_revoke" type="object" string="Revogar" class="btn btn-danger"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_access_vault_share" model="ir.actions.act_window">
+        <field name="name">Compartilhamentos</field>
+        <field name="res_model">access.vault.share</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('active','=',True)]</field>
+    </record>
+</odoo>
+
+

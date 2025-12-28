@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="access_vault.Dashboard">
+        <div class="o_access_vault_dashboard">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2 class="mb-0">Access Vault</h2>
+                    <div class="text-muted" t-if="state.stats">
+                        <t t-esc="state.stats.today"/>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" t-on-click="newCredential">Nova credencial</button>
+                    <button class="btn btn-outline-secondary" t-on-click="openAll">Ver todas</button>
+                    <button class="btn btn-outline-secondary" t-on-click="reload">Atualizar</button>
+                </div>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="o_access_vault_loading text-muted">Carregando...</div>
+            </t>
+            <t t-else="">
+                <t t-if="(state.stats.due_today + state.stats.due_tomorrow) &gt; 0">
+                    <div class="alert alert-danger d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Atenção:</strong>
+                            <t t-if="state.stats.due_today">
+                                <t t-esc="state.stats.due_today"/> credencial(is) precisam ser rotacionadas hoje.
+                            </t>
+                            <t t-if="state.stats.due_today and state.stats.due_tomorrow"> </t>
+                            <t t-if="state.stats.due_tomorrow">
+                                <t t-esc="state.stats.due_tomorrow"/> credencial(is) vencem amanhã.
+                            </t>
+                        </div>
+                        <button class="btn btn-light" t-on-click="openDue">Ver a rotacionar</button>
+                    </div>
+                </t>
+
+                <ul class="nav nav-tabs mb-3">
+                    <li class="nav-item">
+                        <button class="nav-link" t-att-class="state.tab === 'overview' ? 'active' : ''" t-on-click="() => this.setTab('overview')">
+                            Visão geral
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" t-att-class="state.tab === 'due' ? 'active' : ''" t-on-click="() => this.setTab('due')">
+                            A rotacionar
+                        </button>
+                    </li>
+                </ul>
+
+                <t t-if="state.tab === 'overview'">
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-muted">Total</div>
+                                    <div class="display-6" t-esc="state.stats.total"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-muted">Ativas</div>
+                                    <div class="display-6" t-esc="state.stats.total_active"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-muted">A rotacionar (hoje)</div>
+                                    <div class="display-6" t-esc="state.stats.due_today"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Credenciais por Ambiente -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0">Credenciais por Ambiente</h4>
+                        <button class="btn btn-outline-secondary" t-on-click="openAllCredentials">Ver todas</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Ambiente</th>
+                                            <th>Nome</th>
+                                            <th>Tipo</th>
+                                            <th>Crítico</th>
+                                            <th>Unidade</th>
+                                            <th>Status</th>
+                                            <th>Próxima Rotação</th>
+                                            <th>Dono</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="state.stats.credentials_by_env || []" t-as="credential" t-key="credential.id">
+                                            <tr>
+                                                <td>
+                                                    <span class="badge" t-att-class="credential.environment === 'production' ? 'bg-danger' : credential.environment === 'staging' ? 'bg-warning' : 'bg-info'">
+                                                        <t t-esc="credential.environment"/>
+                                                    </span>
+                                                </td>
+                                                <td class="fw-semibold">
+                                                    <t t-esc="credential.name"/>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted" t-esc="credential.access_type"/>
+                                                </td>
+                                                <td>
+                                                    <span class="badge" t-att-class="credential.criticality === 'critical' ? 'bg-danger' : credential.criticality === 'high' ? 'bg-warning' : 'bg-secondary'">
+                                                        <t t-esc="credential.criticality"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted" t-esc="credential.business_unit"/>
+                                                </td>
+                                                <td>
+                                                    <span class="badge" t-att-class="credential.state === 'active' ? 'bg-success' : 'bg-secondary'">
+                                                        <t t-esc="credential.state"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <t t-if="credential.next_rotation_at">
+                                                        <span t-att-class="credential.rotation_due ? 'text-danger fw-bold' : credential.days_to_rotation &lt;= 7 ? 'text-warning' : 'text-muted'">
+                                                            <t t-esc="credential.next_rotation_at"/>
+                                                        </span>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span class="text-muted">-</span>
+                                                    </t>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted" t-esc="credential.owner_names"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="!state.stats.credentials_by_env or !state.stats.credentials_by_env.length">
+                                            <tr>
+                                                <td colspan="8" class="text-center text-muted py-4">
+                                                    Nenhuma credencial encontrada
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <t t-if="state.tab === 'due'">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h4 class="mb-0">Credenciais a rotacionar</h4>
+                        <button class="btn btn-outline-secondary" t-on-click="openDue">Abrir lista</button>
+                    </div>
+
+                    <t t-if="!state.stats.due_list.length">
+                        <div class="text-muted">Nenhuma credencial pendente de rotação.</div>
+                    </t>
+                    <t t-else="">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Próxima rotação</th>
+                                        <th>Dias</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="state.stats.due_list" t-as="c" t-key="c.id">
+                                        <tr>
+                                            <td class="fw-semibold" t-esc="c.name"/>
+                                            <td t-esc="c.next_rotation_at || '-'"/>
+                                            <td>
+                                                <span class="badge bg-danger" t-esc="c.days_to_rotation"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm btn-outline-primary" t-on-click="() => this.openCredential(c.id)">Abrir</button>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </div>
+    </t>
+</templates>
+
+

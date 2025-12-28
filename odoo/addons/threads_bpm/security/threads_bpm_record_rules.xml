@@ -9,7 +9,7 @@
         <field name="groups" eval="[(4, ref('threads_bpm_group_user'))]"/>
         <field name="domain_force">
             ['|', ('owner_id', '=', user.id),
-                  ('business_unit', 'in', user.business_unit)]
+                  (1, '=', 1)]
         </field>
     </record>
 
@@ -20,7 +20,7 @@
         <field name="groups" eval="[(4, ref('threads_bpm_group_manager'))]"/>
         <field name="domain_force">
             ['|', ('owner_id', '=', user.id),
-                  ('business_unit', 'in', user.business_unit)]
+                  (1, '=', 1)]
         </field>
     </record>
 
@@ -43,7 +43,7 @@
                 ('creator_id', '=', user.id),
                 ('participant_ids', 'in', [user.id]),
                 ('step_ids.user_ids', 'in', [user.id]),
-                '&amp;', ('business_unit', 'in', user.business_unit), ('state', '!=', 'draft')]
+                '&amp;', (1, '=', 1), ('state', '!=', 'draft')]
         </field>
     </record>
 
@@ -54,7 +54,7 @@
         <field name="groups" eval="[(4, ref('threads_bpm_group_manager'))]"/>
         <field name="domain_force">
             ['|', ('creator_id', '=', user.id),
-                  ('business_unit', 'in', user.business_unit)]
+                  (1, '=', 1)]
         </field>
     </record>
 
@@ -139,7 +139,7 @@
                 ('execution_id.creator_id', '=', user.id),
                 ('execution_id.participant_ids', 'in', [user.id]),
                 ('execution_id.step_ids.user_ids', 'in', [user.id]),
-                '&amp;', ('business_unit', 'in', user.business_unit), ('execution_id.state', '!=', 'draft')]
+                '&amp;', (1, '=', 1), ('execution_id.state', '!=', 'draft')]
         </field>
     </record>
 
@@ -149,7 +149,7 @@
         <field name="groups" eval="[(4, ref('threads_bpm_group_manager'))]"/>
         <field name="domain_force">
             ['|', ('execution_id.creator_id', '=', user.id),
-                  ('business_unit', 'in', user.business_unit)]
+                  (1, '=', 1)]
         </field>
     </record>
 
