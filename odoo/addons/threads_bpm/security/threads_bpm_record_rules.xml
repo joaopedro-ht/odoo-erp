@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Template Rules -->
+    <!-- Users can see templates from their business unit or public templates -->
+    <record id="rule_template_read_user" model="ir.rule">
+        <field name="name">Threads BPM: read templates (user)</field>
+        <field name="model_id" ref="model_threads_bpm_template"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_user'))]"/>
+        <field name="domain_force">
+            ['|', ('owner_id', '=', user.id),
+                  ('business_unit', 'in', user.business_unit)]
+        </field>
+    </record>
+
+    <!-- Managers can see all templates from their business unit -->
+    <record id="rule_template_read_manager" model="ir.rule">
+        <field name="name">Threads BPM: read templates (manager)</field>
+        <field name="model_id" ref="model_threads_bpm_template"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_manager'))]"/>
+        <field name="domain_force">
+            ['|', ('owner_id', '=', user.id),
+                  ('business_unit', 'in', user.business_unit)]
+        </field>
+    </record>
+
+    <!-- Admins can see all templates -->
+    <record id="rule_template_read_admin" model="ir.rule">
+        <field name="name">Threads BPM: read templates (admin)</field>
+        <field name="model_id" ref="model_threads_bpm_template"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Execution Rules -->
+    <!-- Users can see executions they created, are assigned to, or participate in -->
+    <record id="rule_execution_read_user" model="ir.rule">
+        <field name="name">Threads BPM: read executions (user)</field>
+        <field name="model_id" ref="model_threads_bpm_execution"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_user'))]"/>
+        <field name="domain_force">
+            ['|', '|', '|',
+                ('creator_id', '=', user.id),
+                ('participant_ids', 'in', [user.id]),
+                ('step_ids.user_ids', 'in', [user.id]),
+                '&amp;', ('business_unit', 'in', user.business_unit), ('state', '!=', 'draft')]
+        </field>
+    </record>
+
+    <!-- Managers can see executions from their business unit -->
+    <record id="rule_execution_read_manager" model="ir.rule">
+        <field name="name">Threads BPM: read executions (manager)</field>
+        <field name="model_id" ref="model_threads_bpm_execution"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_manager'))]"/>
+        <field name="domain_force">
+            ['|', ('creator_id', '=', user.id),
+                  ('business_unit', 'in', user.business_unit)]
+        </field>
+    </record>
+
+    <!-- Admins can see all executions -->
+    <record id="rule_execution_read_admin" model="ir.rule">
+        <field name="name">Threads BPM: read executions (admin)</field>
+        <field name="model_id" ref="model_threads_bpm_execution"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Step Rules - follow execution rules -->
+    <record id="rule_step_read_user" model="ir.rule">
+        <field name="name">Threads BPM: read steps (user)</field>
+        <field name="model_id" ref="model_threads_bpm_step"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_user'))]"/>
+        <field name="domain_force">
+            ['|', '|', '|',
+                ('execution_id.creator_id', '=', user.id),
+                ('execution_id.participant_ids', 'in', [user.id]),
+                ('user_ids', 'in', [user.id]),
+                '&amp;', ('execution_id.business_unit', 'in', user.business_unit), ('execution_id.state', '!=', 'draft')]
+        </field>
+    </record>
+
+    <record id="rule_step_read_manager" model="ir.rule">
+        <field name="name">Threads BPM: read steps (manager)</field>
+        <field name="model_id" ref="model_threads_bpm_step"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_manager'))]"/>
+        <field name="domain_force">
+            ['|', ('execution_id.creator_id', '=', user.id),
+                  ('execution_id.business_unit', 'in', user.business_unit)]
+        </field>
+    </record>
+
+    <record id="rule_step_read_admin" model="ir.rule">
+        <field name="name">Threads BPM: read steps (admin)</field>
+        <field name="model_id" ref="model_threads_bpm_step"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Checklist Rules - follow step rules -->
+    <record id="rule_checklist_read_user" model="ir.rule">
+        <field name="name">Threads BPM: read checklist (user)</field>
+        <field name="model_id" ref="model_threads_bpm_checklist"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_user'))]"/>
+        <field name="domain_force">
+            ['|', '|', '|',
+                ('step_id.execution_id.creator_id', '=', user.id),
+                ('step_id.execution_id.participant_ids', 'in', [user.id]),
+                ('step_id.user_ids', 'in', [user.id]),
+                '&amp;', ('step_id.execution_id.business_unit', 'in', user.business_unit), ('step_id.execution_id.state', '!=', 'draft')]
+        </field>
+    </record>
+
+    <record id="rule_checklist_read_manager" model="ir.rule">
+        <field name="name">Threads BPM: read checklist (manager)</field>
+        <field name="model_id" ref="model_threads_bpm_checklist"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_manager'))]"/>
+        <field name="domain_force">
+            ['|', ('step_id.execution_id.creator_id', '=', user.id),
+                  ('step_id.execution_id.business_unit', 'in', user.business_unit)]
+        </field>
+    </record>
+
+    <record id="rule_checklist_read_admin" model="ir.rule">
+        <field name="name">Threads BPM: read checklist (admin)</field>
+        <field name="model_id" ref="model_threads_bpm_checklist"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Log Rules -->
+    <!-- Users can see logs for executions they can access -->
+    <record id="rule_log_read_user" model="ir.rule">
+        <field name="name">Threads BPM: read logs (user)</field>
+        <field name="model_id" ref="model_threads_bpm_log"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_user'))]"/>
+        <field name="domain_force">
+            ['|', '|', '|',
+                ('execution_id.creator_id', '=', user.id),
+                ('execution_id.participant_ids', 'in', [user.id]),
+                ('execution_id.step_ids.user_ids', 'in', [user.id]),
+                '&amp;', ('business_unit', 'in', user.business_unit), ('execution_id.state', '!=', 'draft')]
+        </field>
+    </record>
+
+    <record id="rule_log_read_manager" model="ir.rule">
+        <field name="name">Threads BPM: read logs (manager)</field>
+        <field name="model_id" ref="model_threads_bpm_log"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_manager'))]"/>
+        <field name="domain_force">
+            ['|', ('execution_id.creator_id', '=', user.id),
+                  ('business_unit', 'in', user.business_unit)]
+        </field>
+    </record>
+
+    <record id="rule_log_read_admin" model="ir.rule">
+        <field name="name">Threads BPM: read logs (admin)</field>
+        <field name="model_id" ref="model_threads_bpm_log"/>
+        <field name="groups" eval="[(4, ref('threads_bpm_group_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+</odoo>

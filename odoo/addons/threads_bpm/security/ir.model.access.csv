@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+threads_bpm_template_user,threads_bpm.template user,model_threads_bpm_template,base.group_user,1,0,1,0
+threads_bpm_template_manager,threads_bpm.template manager,model_threads_bpm_template,threads_bpm_group_manager,1,1,1,1
+threads_bpm_template_admin,threads_bpm.template admin,model_threads_bpm_template,base.group_system,1,1,1,1
+
+threads_bpm_execution_user,threads_bpm.execution user,model_threads_bpm_execution,base.group_user,1,1,1,1
+threads_bpm_execution_manager,threads_bpm.execution manager,model_threads_bpm_execution,threads_bpm_group_manager,1,1,1,1
+threads_bpm_execution_admin,threads_bpm.execution admin,model_threads_bpm_execution,base.group_system,1,1,1,1
+
+threads_bpm_step_user,threads_bpm.step user,model_threads_bpm_step,base.group_user,1,1,1,1
+threads_bpm_step_admin,threads_bpm.step admin,model_threads_bpm_step,base.group_system,1,1,1,1
+
+threads_bpm_checklist_user,threads_bpm.checklist user,model_threads_bpm_checklist,base.group_user,1,1,1,1
+threads_bpm_checklist_admin,threads_bpm.checklist admin,model_threads_bpm_checklist,base.group_system,1,1,1,1
+
+threads_bpm_log_user,threads_bpm.log user,model_threads_bpm_log,base.group_user,1,0,0,0
+threads_bpm_log_admin,threads_bpm.log admin,model_threads_bpm_log,base.group_system,1,1,1,1

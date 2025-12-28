@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Execution Tree View -->
+    <record id="view_threads_bpm_execution_tree" model="ir.ui.view">
+        <field name="name">threads_bpm.execution.tree</field>
+        <field name="model">threads_bpm.execution</field>
+        <field name="arch" type="xml">
+            <list string="Execuções BPM">
+                <field name="name"/>
+                <field name="template_id"/>
+                <field name="template_type"/>
+                <field name="business_unit"/>
+                <field name="state"/>
+                <field name="progress_percentage"/>
+                <field name="started_at"/>
+                <field name="completed_at"/>
+                <field name="creator_id"/>
+                <field name="has_overdue_steps" invisible="1"/>
+                <field name="has_at_risk_steps" invisible="1"/>
+                <field name="current_step_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Execution Form View -->
+    <record id="view_threads_bpm_execution_form" model="ir.ui.view">
+        <field name="name">threads_bpm.execution.form</field>
+        <field name="model">threads_bpm.execution</field>
+        <field name="arch" type="xml">
+            <form string="Execução BPM">
+                <header>
+                    <button name="action_start_execution" type="object" string="Iniciar"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_complete_execution" type="object" string="Concluir"
+                            class="btn-success" invisible="state != 'in_progress'"/>
+                    <button name="action_cancel_execution" type="object" string="Cancelar"
+                            class="btn-danger" invisible="state in ('completed', 'cancelled')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(threads_bpm.action_threads_bpm_template)d" type="action"
+                                class="oe_stat_button" icon="fa-cog" attrs="{'invisible': [('template_id', '=', False)]}">
+                            <field name="template_id" readonly="1"/>
+                        </button>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="template_id" readonly="state != 'draft'"/>
+                            <field name="business_unit" readonly="1"/>
+                            <field name="creator_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="progress_percentage" widget="progressbar"/>
+                            <field name="started_at" readonly="1"/>
+                            <field name="completed_at" readonly="1"/>
+                            <field name="current_step_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group name="risk_indicators" invisible="state in ('draft', 'completed', 'cancelled')">
+                        <div class="alert alert-danger" role="alert" invisible="not has_overdue_steps">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            <strong> Atenção!</strong> Esta execução possui etapas atrasadas.
+                        </div>
+                        <div class="alert alert-warning" role="alert" invisible="not has_at_risk_steps">
+                            <i class="fa fa-exclamation-circle"></i>
+                            <strong> Alerta!</strong> Esta execução possui etapas em risco (SLA vence em menos de 24h).
+                        </div>
+                    </group>
+
+                    <notebook>
+                        <page string="Etapas" name="steps">
+                            <field name="step_ids" mode="tree,kanban" attrs="{'readonly': [('state', 'in', ('completed', 'cancelled'))]}">
+                                <list string="Etapas" editable="bottom">
+                                    <field name="sequence"/>
+                                    <field name="name"/>
+                                    <field name="user_ids" widget="many2many_tags" readonly="1"/>
+                                    <field name="state"/>
+                                    <field name="is_required" readonly="1"/>
+                                    <field name="sla_enabled" readonly="1"/>
+                                    <field name="sla_deadline" readonly="1"/>
+                                    <field name="is_overdue" invisible="1"/>
+                                    <field name="is_at_risk" invisible="1"/>
+                                    <field name="started_at" readonly="1"/>
+                                    <field name="completed_at" readonly="1"/>
+                                    <field name="checklist_progress" widget="progressbar" readonly="1"/>
+                                    <button name="action_start_step" type="object" string="Iniciar"
+                                            class="btn-primary btn-sm" invisible="state != 'pending' or parent.state != 'in_progress'"/>
+                                    <button name="action_complete_step" type="object" string="Concluir"
+                                            class="btn-success btn-sm" invisible="state != 'in_progress' or parent.state != 'in_progress'"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Histórico" name="history">
+                            <field name="log_ids" readonly="1" mode="tree">
+                                <list string="Histórico">
+                                    <field name="timestamp"/>
+                                    <field name="user_id"/>
+                                    <field name="action"/>
+                                    <field name="detail"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Execution Search View -->
+    <record id="view_threads_bpm_execution_search" model="ir.ui.view">
+        <field name="name">threads_bpm.execution.search</field>
+        <field name="model">threads_bpm.execution</field>
+        <field name="arch" type="xml">
+            <search string="Execuções BPM">
+                <field name="name"/>
+                <field name="template_id"/>
+                <field name="business_unit"/>
+                <field name="creator_id"/>
+                <field name="participant_ids"/>
+
+                <filter string="Em Andamento" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Concluídas" name="completed" domain="[('state', '=', 'completed')]"/>
+                <filter string="Canceladas" name="cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <filter string="Em Risco" name="at_risk" domain="[('has_at_risk_steps', '=', True)]"/>
+                <filter string="Atrasadas" name="overdue" domain="[('has_overdue_steps', '=', True)]"/>
+                <filter string="Minhas" name="my_executions" domain="['|', ('creator_id', '=', uid), ('participant_ids', 'in', [uid])]"/>
+
+                <group expand="0" string="Agrupar por">
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Modelo" name="group_template" context="{'group_by': 'template_id'}"/>
+                    <filter string="Unidade" name="group_unit" context="{'group_by': 'business_unit'}"/>
+                    <filter string="Criador" name="group_creator" context="{'group_by': 'creator_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Execution Action -->
+    <record id="action_threads_bpm_execution" model="ir.actions.act_window">
+        <field name="name">Execuções BPM</field>
+        <field name="res_model">threads_bpm.execution</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_threads_bpm_execution_search"/>
+        <field name="help">Visualize e gerencie execuções de Threads e Processos.</field>
+    </record>
+
+</odoo>

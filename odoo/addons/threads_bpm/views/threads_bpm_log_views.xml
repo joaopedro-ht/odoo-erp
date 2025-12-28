@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Log Tree View -->
+    <record id="view_threads_bpm_log_tree" model="ir.ui.view">
+        <field name="name">threads_bpm.log.tree</field>
+        <field name="model">threads_bpm.log</field>
+        <field name="arch" type="xml">
+            <list string="Histórico BPM">
+                <field name="timestamp"/>
+                <field name="execution_id"/>
+                <field name="user_id"/>
+                <field name="action"/>
+                <field name="detail"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Log Search View -->
+    <record id="view_threads_bpm_log_search" model="ir.ui.view">
+        <field name="name">threads_bpm.log.search</field>
+        <field name="model">threads_bpm.log</field>
+        <field name="arch" type="xml">
+            <search string="Histórico BPM">
+                <field name="execution_id"/>
+                <field name="user_id"/>
+                <field name="action"/>
+                <field name="detail"/>
+                <field name="template_id"/>
+                <field name="business_unit"/>
+
+                <filter string="Hoje" name="today" domain="[('timestamp', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')), ('timestamp', '&lt;', (context_today() + relativedelta(days=1)).strftime('%Y-%m-%d 00:00:00'))]"/>
+                <filter string="Esta Semana" name="this_week" domain="[('timestamp', '&gt;=', (context_today() - relativedelta(days=context_today().weekday())).strftime('%Y-%m-%d 00:00:00')), ('timestamp', '&lt;', (context_today() + relativedelta(days=6-context_today().weekday())).strftime('%Y-%m-%d 23:59:59'))]"/>
+
+                <group expand="0" string="Agrupar por">
+                    <filter string="Ação" name="group_action" context="{'group_by': 'action'}"/>
+                    <filter string="Usuário" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Execução" name="group_execution" context="{'group_by': 'execution_id'}"/>
+                    <filter string="Data" name="group_date" context="{'group_by': 'timestamp:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Log Action -->
+    <record id="action_threads_bpm_log" model="ir.actions.act_window">
+        <field name="name">Histórico BPM</field>
+        <field name="res_model">threads_bpm.log</field>
+        <field name="view_mode">tree</field>
+        <field name="search_view_id" ref="view_threads_bpm_log_search"/>
+        <field name="help">Histórico completo de ações no sistema BPM.</field>
+    </record>
+
+</odoo>

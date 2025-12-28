@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="ir_cron_threads_bpm_auto_recreate" model="ir.cron">
+        <field name="name">Threads BPM: Auto-recreate recurring processes</field>
+        <field name="model_id" ref="model_threads_bpm_execution"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_auto_recreate_processes()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="ir_cron_threads_bpm_sla_reminders" model="ir.cron">
+        <field name="name">Threads BPM: SLA reminders</field>
+        <field name="model_id" ref="model_threads_bpm_execution"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_sla_reminders()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

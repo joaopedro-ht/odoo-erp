@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Checklist Tree View -->
+    <record id="view_threads_bpm_checklist_tree" model="ir.ui.view">
+        <field name="name">threads_bpm.checklist.tree</field>
+        <field name="model">threads_bpm.checklist</field>
+        <field name="arch" type="xml">
+            <list string="Checklist">
+                <field name="name"/>
+                <field name="is_required"/>
+                <field name="is_completed"/>
+                <field name="completed_by"/>
+                <field name="completed_at"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

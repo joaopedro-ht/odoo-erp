@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Main Menu -->
+    <menuitem id="menu_threads_bpm_root" name="Threads BPM" sequence="20" action="threads_bpm_dashboard_action" web_icon="threads_bpm,static/description/icon.png"/>
+
+    <!-- Dashboard -->
+    <menuitem id="menu_threads_bpm_dashboard" name="Dashboard" parent="menu_threads_bpm_root" action="threads_bpm_dashboard_action" sequence="1"/>
+
+    <!-- Executions -->
+    <menuitem id="menu_threads_bpm_executions" name="Execuções" parent="menu_threads_bpm_root" action="action_threads_bpm_execution" sequence="5"/>
+
+    <!-- Templates -->
+    <menuitem id="menu_threads_bpm_templates" name="Modelos" parent="menu_threads_bpm_root" action="action_threads_bpm_template" sequence="10"/>
+
+    <!-- History -->
+    <menuitem id="menu_threads_bpm_history" name="Histórico" parent="menu_threads_bpm_root" action="action_threads_bpm_log" sequence="15"/>
+
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Default business unit for admin user -->
+    <record id="base.user_admin" model="res.users">
+        <field name="business_unit">management</field>
+    </record>
+
+    <!-- Demo user business units (if demo data exists) -->
+    <record id="base.user_demo" model="res.users">
+        <field name="business_unit">platform</field>
+    </record>
+</odoo>

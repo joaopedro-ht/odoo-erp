@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="threads_bpm_dashboard_action" model="ir.actions.client">
+        <field name="name">Threads BPM</field>
+        <field name="tag">threads_bpm.dashboard</field>
+    </record>
+</odoo>

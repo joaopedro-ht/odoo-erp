@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="threads_bpm_group_user" model="res.groups">
+        <field name="name">Threads BPM / User</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="threads_bpm_group_manager" model="res.groups">
+        <field name="name">Threads BPM / Manager</field>
+        <field name="implied_ids" eval="[(4, ref('threads_bpm_group_user'))]"/>
+    </record>
+
+    <record id="threads_bpm_group_admin" model="res.groups">
+        <field name="name">Threads BPM / Admin</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_system'))]"/>
+    </record>
+</odoo>

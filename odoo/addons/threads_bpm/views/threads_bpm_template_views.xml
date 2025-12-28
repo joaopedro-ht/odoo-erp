@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Template Tree View -->
+    <record id="view_threads_bpm_template_tree" model="ir.ui.view">
+        <field name="name">threads_bpm.template.tree</field>
+        <field name="model">threads_bpm.template</field>
+        <field name="arch" type="xml">
+            <list string="Modelos BPM">
+                <field name="name"/>
+                <field name="template_type"/>
+                <field name="business_unit"/>
+                <field name="owner_id"/>
+                <field name="execution_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Template Form View -->
+    <record id="view_threads_bpm_template_form" model="ir.ui.view">
+        <field name="name">threads_bpm.template.form</field>
+        <field name="model">threads_bpm.template</field>
+        <field name="arch" type="xml">
+            <form string="Modelo BPM">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_create_execution" type="object" class="oe_stat_button" icon="fa-play">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="execution_count"/></span>
+                                <span class="o_stat_text">Execuções</span>
+                            </div>
+                        </button>
+                        <button name="action_view_executions" type="object" class="oe_stat_button" icon="fa-list">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="active_execution_count"/></span>
+                                <span class="o_stat_text">Ativas</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="template_type"/>
+                            <field name="business_unit"/>
+                            <field name="owner_id"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="auto_recreate" attrs="{'invisible': [('template_type', '!=', 'process')]}" colspan="2"/>
+                            <field name="recreate_interval" attrs="{'invisible': ['|', ('template_type', '!=', 'process'), ('auto_recreate', '=', False)]}"/>
+                            <field name="recreate_unit" attrs="{'invisible': ['|', ('template_type', '!=', 'process'), ('auto_recreate', '=', False)]}"/>
+                        </group>
+                    </group>
+
+                    <field name="description" placeholder="Descrição do modelo..."/>
+
+                    <notebook>
+                        <page string="Etapas" name="steps">
+                            <field name="step_ids" mode="tree,kanban">
+                                <list string="Etapas" editable="bottom">
+                                    <field name="sequence"/>
+                                    <field name="name"/>
+                                    <field name="user_ids" widget="many2many_tags"/>
+                                    <field name="sla_enabled"/>
+                                    <field name="sla_hours"/>
+                                    <field name="sla_days"/>
+                                    <field name="is_required"/>
+                                </list>
+                                <kanban class="o_kanban_mobile">
+                                    <field name="name"/>
+                                    <field name="user_ids"/>
+                                    <field name="sla_enabled"/>
+                                    <field name="is_required"/>
+                                    <templates>
+                                        <t t-name="card">
+                                            <div class="oe_kanban_card">
+                                                <div class="o_kanban_record_top mb-2">
+                                                    <div class="o_kanban_record_headings">
+                                                        <strong class="o_kanban_record_title">
+                                                            <span><field name="name"/></span>
+                                                        </strong>
+                                                    </div>
+                                                </div>
+                                                <div class="o_kanban_record_body">
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <field name="user_ids" widget="many2many_tags"/>
+                                                        </div>
+                                                        <div class="col-6 text-end">
+                                                            <span t-if="record.sla_enabled.raw_value" class="badge bg-info">SLA</span>
+                                                            <span t-if="!record.is_required.raw_value" class="badge bg-warning">Opcional</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </page>
+
+                        <page string="Execuções" name="executions">
+                            <field name="execution_ids" readonly="1" mode="tree">
+                                <list string="Execuções">
+                                    <field name="name"/>
+                                    <field name="state"/>
+                                    <field name="started_at"/>
+                                    <field name="completed_at"/>
+                                    <field name="progress_percentage"/>
+                                    <field name="creator_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Template Search View -->
+    <record id="view_threads_bpm_template_search" model="ir.ui.view">
+        <field name="name">threads_bpm.template.search</field>
+        <field name="model">threads_bpm.template</field>
+        <field name="arch" type="xml">
+            <search string="Modelos BPM">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="owner_id"/>
+                <field name="business_unit"/>
+
+                <filter string="Meus Modelos" name="my_templates" domain="[('owner_id', '=', uid)]"/>
+                <filter string="Ativos" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Threads" name="threads" domain="[('template_type', '=', 'thread')]"/>
+                <filter string="Processos" name="processes" domain="[('template_type', '=', 'process')]"/>
+
+                <group expand="0" string="Agrupar por">
+                    <filter string="Tipo" name="group_type" context="{'group_by': 'template_type'}"/>
+                    <filter string="Unidade" name="group_unit" context="{'group_by': 'business_unit'}"/>
+                    <filter string="Dono" name="group_owner" context="{'group_by': 'owner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Template Action -->
+    <record id="action_threads_bpm_template" model="ir.actions.act_window">
+        <field name="name">Modelos BPM</field>
+        <field name="res_model">threads_bpm.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_threads_bpm_template_search"/>
+        <field name="help">Crie e gerencie modelos de Threads e Processos para seu BPM.</field>
+    </record>
+
+</odoo>

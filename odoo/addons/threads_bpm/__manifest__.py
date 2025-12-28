@@ -1,0 +1,31 @@
+{
+    "name": "Threads BPM - Business Process Management",
+    "version": "19.0.1.0.0",
+    "category": "Productivity",
+    "summary": "Visual BPM system for Threads (one-time processes) and recurring Processes with SLAs, checklists, and project integration",
+    "author": "Hypetech",
+    "depends": ["base", "web", "mail", "project"],
+    "data": [
+        "security/threads_bpm_groups.xml",
+        "security/ir.model.access.csv",
+        "security/threads_bpm_record_rules.xml",
+        "data/user_data.xml",
+        "data/threads_bpm_cron.xml",
+        "views/threads_bpm_template_views.xml",
+        "views/threads_bpm_execution_views.xml",
+        "views/threads_bpm_step_views.xml",
+        "views/threads_bpm_checklist_views.xml",
+        "views/threads_bpm_dashboard_views.xml",
+        "views/threads_bpm_menus.xml",
+        "data/mail_templates.xml",
+    ],
+    "assets": {
+        "web.assets_backend": [
+            "threads_bpm/static/src/**/*.js",
+            "threads_bpm/static/src/**/*.xml",
+            "threads_bpm/static/src/**/*.scss",
+        ],
+    },
+    "application": True,
+    "license": "LGPL-3",
+}

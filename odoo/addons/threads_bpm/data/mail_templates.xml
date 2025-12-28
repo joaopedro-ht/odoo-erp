@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Email template for execution started notifications -->
+    <record id="mail_template_execution_started" model="mail.template">
+        <field name="name">Threads BPM - Execution Started</field>
+        <field name="model_id" ref="model_threads_bpm_execution"/>
+        <field name="subject">Threads BPM: Execução Iniciada - ${object.name}</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <h2 style="color: #007bff;">Threads BPM - Nova Execução</h2>
+    <p>Olá <strong>${object.participant_ids.mapped('name')[0] or 'Colaborador'}</strong>,</p>
+
+    <p>Você foi incluído na execução: <strong>${object.name}</strong></p>
+
+    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;">
+        <p><strong>Modelo:</strong> ${object.template_id.name}</p>
+        <p><strong>Tipo:</strong> ${object.template_type}</p>
+        <p><strong>Unidade:</strong> ${object.business_unit}</p>
+        <p><strong>Iniciada em:</strong> ${object.started_at}</p>
+    </div>
+
+    <p><a href="/web#id=${object.id}&model=threads_bpm.execution&view_type=form" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Abrir Execução</a></p>
+
+    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+    <p style="color: #666; font-size: 12px;">Esta é uma notificação automática do sistema Threads BPM.</p>
+</div>
+        ]]></field>
+    </record>
+
+    <!-- Email template for SLA warnings -->
+    <record id="mail_template_sla_warning" model="mail.template">
+        <field name="name">Threads BPM - SLA Warning</field>
+        <field name="model_id" ref="model_threads_bpm_execution"/>
+        <field name="subject">Threads BPM: SLA - ${object.name}</field>
+        <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <h2 style="color: #ffc107;">Threads BPM - Alerta de SLA</h2>
+    <p>Olá <strong>${object.participant_ids.mapped('name')[0] or 'Colaborador'}</strong>,</p>
+
+    <p>Há etapas com SLA em risco na execução: <strong>${object.name}</strong></p>
+
+    <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #ffc107;">
+        <p><strong>Etapas em risco:</strong></p>
+        % for step in object.step_ids.filtered(lambda s: s.is_at_risk and not s.completed_at):
+        <p>• ${step.name} - Prazo: ${step.sla_deadline}</p>
+        % endfor
+
+        % if object.step_ids.filtered(lambda s: s.is_overdue and not s.completed_at):
+        <p><strong style="color: #dc3545;">Etapas atrasadas:</strong></p>
+        % for step in object.step_ids.filtered(lambda s: s.is_overdue and not s.completed_at):
+        <p style="color: #dc3545;">• ${step.name} - Atraso desde: ${step.sla_deadline}</p>
+        % endfor
+        % endif
+    </div>
+
+    <p><a href="/web#id=${object.id}&model=threads_bpm.execution&view_type=form" style="background-color: #ffc107; color: black; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Abrir Execução</a></p>
+
+    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+    <p style="color: #666; font-size: 12px;">Esta é uma notificação automática do sistema Threads BPM.</p>
+</div>
+        ]]></field>
+    </record>
+</odoo>

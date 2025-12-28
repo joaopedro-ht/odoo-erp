@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="threads_bpm.Dashboard">
+        <div class="o_threads_bpm_dashboard container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">Threads BPM</h2>
+                    <div class="text-muted mt-1">Gerencie suas Threads e Processos</div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" t-on-click="createExecution">
+                        <i class="fa fa-plus"></i> Nova Execução
+                    </button>
+                    <button class="btn btn-outline-primary" t-on-click="createTemplate">
+                        <i class="fa fa-cog"></i> Novo Modelo
+                    </button>
+                    <button class="btn btn-outline-secondary" t-on-click="reload">
+                        <i class="fa fa-refresh"></i> Atualizar
+                    </button>
+                </div>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <div class="mt-2 text-muted">Carregando dados...</div>
+                </div>
+            </t>
+
+            <t t-else="">
+                <!-- Statistics Cards -->
+                <div class="row g-3 mb-4" t-if="state.stats">
+                    <div class="col-12 col-md-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="display-4 text-primary" t-esc="state.stats.total"></div>
+                                <div class="text-muted">Total</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="display-4 text-success" t-esc="state.stats.on_track"></div>
+                                <div class="text-muted">Em Dia</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="display-4 text-warning" t-esc="state.stats.at_risk"></div>
+                                <div class="text-muted">Em Risco</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="display-4 text-danger" t-esc="state.stats.overdue"></div>
+                                <div class="text-muted">Atrasadas</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Executions -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Minhas Execuções Recentes</h5>
+                        <button class="btn btn-sm btn-outline-primary" t-on-click="openExecutions">
+                            Ver Todas
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Execução</th>
+                                        <th>Modelo</th>
+                                        <th>Status</th>
+                                        <th>Progresso</th>
+                                        <th>Etapa Atual</th>
+                                        <th>Iniciada em</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="all_executions" t-value="state.executions.on_track.concat(state.executions.at_risk, state.executions.overdue, state.executions.completed).slice(0, 10)"/>
+                                    <t t-foreach="all_executions" t-as="execution" t-key="execution.id">
+                                        <tr>
+                                            <td>
+                                                <div class="fw-semibold" t-esc="execution.name"></div>
+                                                <small class="text-muted" t-esc="execution.business_unit"></small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-dark">
+                                                    <t t-esc="execution.template_type"/>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span t-att-class="getStatusBadgeClass(getExecutionStatus(execution))">
+                                                    <t t-esc="getStatusText(getExecutionStatus(execution))"/>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="progress" style="width: 80px;">
+                                                    <div class="progress-bar" t-att-style="'width: ' + execution.progress_percentage + '%'"
+                                                         t-att-class="execution.progress_percentage === 100 ? 'bg-success' : 'bg-primary'">
+                                                        <t t-esc="Math.round(execution.progress_percentage)"/>%
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <t t-if="execution.current_step_id">
+                                                    <t t-esc="execution.current_step_id.name"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="text-muted">-</span>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <t t-if="execution.started_at">
+                                                    <t t-esc="new Date(execution.started_at).toLocaleDateString('pt-BR')"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="text-muted">-</span>
+                                                </t>
+                                            </td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm btn-outline-primary" t-on-click="() => openExecution(execution.id)">
+                                                    Abrir
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="!all_executions.length">
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-4">
+                                                Nenhuma execução encontrada.
+                                                <a href="#" t-on-click="createExecution">Crie sua primeira execução</a>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Ações Rápidas</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <button class="btn btn-outline-success w-100" t-on-click="() => openExecutions('on_track')">
+                                            <i class="fa fa-check-circle"></i>
+                                            <br/>Em Dia (<t t-esc="state.stats.on_track"/>)
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-outline-warning w-100" t-on-click="() => openExecutions('at_risk')">
+                                            <i class="fa fa-exclamation-triangle"></i>
+                                            <br/>Em Risco (<t t-esc="state.stats.at_risk"/>)
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-outline-danger w-100" t-on-click="() => openExecutions('overdue')">
+                                            <i class="fa fa-times-circle"></i>
+                                            <br/>Atrasadas (<t t-esc="state.stats.overdue"/>)
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-outline-secondary w-100" t-on-click="() => openExecutions('completed')">
+                                            <i class="fa fa-archive"></i>
+                                            <br/>Concluídas (<t t-esc="state.stats.completed"/>)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>
