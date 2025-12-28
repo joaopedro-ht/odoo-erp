@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_metabase_category_tree" model="ir.ui.view">
+        <field name="name">metabase.category.tree</field>
+        <field name="model">metabase.category</field>
+        <field name="arch" type="xml">
+            <list string="Categorias" default_order="sequence,name">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="dashboards_count" string="# Dashboards"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_metabase_category_form" model="ir.ui.view">
+        <field name="name">metabase.category.form</field>
+        <field name="model">metabase.category</field>
+        <field name="arch" type="xml">
+            <form string="Categoria">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="sequence"/>
+                    </group>
+                    <notebook>
+                        <page string="Dashboards">
+                            <field name="dashboard_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="active"/>
+                                    <field name="url"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_metabase_category" model="ir.actions.act_window">
+        <field name="name">Categorias</field>
+        <field name="res_model">metabase.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Crie categorias para organizar seus dashboards do Metabase.</p>
+        </field>
+    </record>
+
+</odoo>
+
+

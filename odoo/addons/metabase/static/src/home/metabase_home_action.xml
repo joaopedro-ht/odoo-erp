@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="metabase.MetabaseHomeAction">
+        <!-- A action só serve para disparar o modal; mantém fallback caso o diálogo seja bloqueado -->
+        <div class="o_metabase_home_action p-3">
+            <h2 class="mb-2">METABASE</h2>
+            <p class="text-muted mb-3">Abrindo painéis…</p>
+            <button class="btn btn-primary" t-on-click="openDialog">Abrir lista de dashboards</button>
+        </div>
+    </t>
+</templates>
+
+

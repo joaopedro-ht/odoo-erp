@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <record id="metabase_category_default" model="metabase.category">
+        <field name="name">Geral</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="metabase_dashboard_seed_1" model="metabase.dashboard">
+        <field name="name">Dashboard Principal</field>
+        <field name="sequence">10</field>
+        <field name="active">True</field>
+        <field name="category_id" ref="metabase_category_default"/>
+        <field name="url">http://metabase.hypetech.local/public/dashboard/658c2480-cd76-41fc-851e-f657139df84b</field>
+        <field name="description">Dashboard público do Metabase.</field>
+    </record>
+</odoo>
+
+

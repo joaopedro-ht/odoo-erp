@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="metabase.MetabaseViewerAction">
+        <div class="o_metabase_viewer">
+            <iframe t-att-src="state.url"
+                    class="o_metabase_viewer_iframe"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"/>
+        </div>
+    </t>
+</templates>
+
+

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Client Action (home modal) -->
+    <record id="action_metabase_home" model="ir.actions.client">
+        <field name="name">METABASE</field>
+        <field name="tag">metabase.home</field>
+    </record>
+
+    <menuitem id="menu_metabase_root"
+              name="METABASE"
+              action="action_metabase_home"
+              sequence="10"/>
+
+    <menuitem id="menu_metabase_dashboards"
+              name="Dashboards"
+              parent="menu_metabase_root"
+              action="action_metabase_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_metabase_categories"
+              name="Categorias"
+              parent="menu_metabase_root"
+              action="action_metabase_category"
+              sequence="20"
+              groups="base.group_system"/>
+
+</odoo>
+
+

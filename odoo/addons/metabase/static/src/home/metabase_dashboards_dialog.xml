@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="metabase.MetabaseDashboardsDialog">
+        <Dialog title="'METABASE'" size="'xl'">
+            <t t-set-slot="footer">
+                <button class="btn btn-secondary" t-on-click="openListView">Ver todos (lista)</button>
+                <button class="btn btn-primary" t-on-click="props.close">Fechar</button>
+            </t>
+
+            <div class="o_metabase_dialog">
+                <div class="o_metabase_sidebar">
+                    <div class="fw-bold mb-2">Categorias</div>
+                    <div class="list-group">
+                        <button
+                            t-foreach="categoriesSorted"
+                            t-as="cat"
+                            t-key="cat.id"
+                            class="list-group-item list-group-item-action"
+                            t-att-class="state.selectedCategoryId === cat.id ? 'active' : ''"
+                            t-on-click="() => this.selectCategory(cat.id)"
+                        >
+                            <t t-esc="cat.name"/>
+                            <span class="badge bg-secondary float-end" t-esc="cat.dashboards_count"/>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="o_metabase_content">
+                    <t t-if="!state.selectedCategoryId">
+                        <div class="alert alert-info">Selecione uma categoria para ver os dashboards.</div>
+                    </t>
+                    <t t-else="">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <div class="fw-bold mb-2">Dashboards</div>
+                                <div class="list-group">
+                                    <div
+                                        t-foreach="dashboardsForCategory(state.selectedCategoryId)"
+                                        t-as="d"
+                                        t-key="d.id"
+                                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-start gap-2"
+                                        role="button"
+                                        tabindex="0"
+                                    >
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between">
+                                                <span t-esc="d.name"/>
+                                                <small class="text-muted" t-if="d.sequence" t-esc="d.sequence"/>
+                                            </div>
+                                            <small class="text-muted" t-if="d.description" t-esc="d.description"/>
+                                        </div>
+                                        <button class="btn btn-outline-primary btn-sm flex-shrink-0"
+                                            t-on-click.stop="() => this.openDashboard(d)">
+                                            Visualizar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+</templates>
+
+

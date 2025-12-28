@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_metabase_category_user,metabase.category user,model_metabase_category,base.group_user,1,0,0,0
+access_metabase_category_admin,metabase.category admin,model_metabase_category,base.group_system,1,1,1,1
+access_metabase_dashboard_user,metabase.dashboard user,model_metabase_dashboard,base.group_user,1,0,0,0
+access_metabase_dashboard_admin,metabase.dashboard admin,model_metabase_dashboard,base.group_system,1,1,1,1
+access_metabase_dashboard_open_wizard_user,metabase.dashboard.open.wizard user,model_metabase_dashboard_open_wizard,base.group_user,1,0,1,0
+access_metabase_dashboard_open_wizard_admin,metabase.dashboard.open.wizard admin,model_metabase_dashboard_open_wizard,base.group_system,1,1,1,1
+
+

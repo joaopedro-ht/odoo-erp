@@ -1,0 +1,39 @@
+.o_metabase_dialog {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 12px;
+    min-height: 60vh;
+}
+
+.o_metabase_sidebar {
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    padding-right: 12px;
+}
+
+.o_metabase_iframe_wrap {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 52vh;
+    background: #fff;
+}
+
+.o_metabase_iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+@media (max-width: 992px) {
+    .o_metabase_dialog {
+        grid-template-columns: 1fr;
+    }
+    .o_metabase_sidebar {
+        border-right: 0;
+        padding-right: 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        padding-bottom: 12px;
+    }
+}
+
+
